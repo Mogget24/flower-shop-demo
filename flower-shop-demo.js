@@ -25,7 +25,15 @@ readlineInterface.on('line', (line) => {
     // Close case
     if (/done/gi.test(line)) {
         try {
-            flowerShopTools.generateTotal(lines)
+            const totalBreakdown = flowerShopTools.generateTotal(lines)
+            console.log('Breakdown is')
+            totalBreakdown.forEach(breakdown => {
+                console.log(`${breakdown.quantity} ${breakdown.code} ${breakdown.totalPrice}`)
+                breakdown.items.forEach(item => {
+                    console.log(` - ${item.occurrencies} x ${item.quantity} ${item.price}`)
+                })
+                console.log('---')
+            });
             console.log('Thank you for using the Flower Shop tool!');
             process.exit(0);
         }

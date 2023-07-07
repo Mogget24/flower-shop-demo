@@ -4,7 +4,7 @@ const App = () => {
 
   return (
     <>
-      App
+      <h1>Flower Shop Demo</h1>
     </>
   )
 }
