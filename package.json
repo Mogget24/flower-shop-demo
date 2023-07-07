@@ -10,8 +10,10 @@
     "preview": "vite preview",
     "compile-ts-tools": "tsc --module commonjs --outDir ./dist/cjs ./src/shared/flower-shop-tools.ts",
     "rename-to-cjs": "cd ./dist/cjs/ && rm flower-shop-tools.cjs && ren flower-shop-tools.js flower-shop-tools.cjs",
-    "compile-ts": " npm-run-all -c compile-ts-tools rename-to-cjs",
-    "demo": "node flower-shop-demo.js"
+    "prepare-demo": " npm-run-all -c compile-ts-tools rename-to-cjs",
+    "demo": "npm run prepare-demo && node flower-shop-demo.js",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "npm-run-all": "^4.1.5",

@@ -1,4 +1,4 @@
-interface IFlowerShopBundle {
+export interface IFlowerShopBundle {
     quantity: number;
     price: string;
 }
