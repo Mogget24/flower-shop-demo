@@ -1,0 +1,12 @@
+.Button {
+    background: var(--foreground);
+    color: var(--text-on-foreground);
+    appearance: none;
+    padding: 1rem;
+    border: none;
+    border-radius: 1rem;
+
+    &.delete {
+        background: red;
+    }
+}

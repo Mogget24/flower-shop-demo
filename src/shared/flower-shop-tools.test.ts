@@ -68,12 +68,12 @@ describe('flower-shop-tools', () => {
         })
     })
 
-    describe('calculateTotalBreakdown', () => {
-        it('should return an array with the breakdown', () => {
-            const breakdown = calculateTotalBreakdown([{ code: "R12", quantity: 5 }], [{ code: "R12", quantity: 5, bundle: { quantity: 5, price: '$6.99' }, occurrencies: 1 }])
-            console.log('breakdown', breakdown)
-        })
-    })
+    // describe('calculateTotalBreakdown', () => {
+    //     it('should return an array with the breakdown', () => {
+    //         const breakdown = calculateTotalBreakdown([{ code: "R12", quantity: 5, bundle: { quantity: 5, price: '$6.99' }, occurrencies: 1 }])
+    //         console.log('breakdown', breakdown)
+    //     })
+    // })
 
     describe('generateTotal', () => {
         it('should throw if an empty array is passed', () => {

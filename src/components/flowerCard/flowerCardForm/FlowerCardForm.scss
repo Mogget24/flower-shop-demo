@@ -1,0 +1,23 @@
+.FlowerCardForm {
+    .form-element {
+        margin-bottom: 1rem;
+        label {
+        }
+
+        input,
+        select {
+            display: block;
+            // appearance: none;
+            padding: 1rem;
+            border: none;
+            border-radius: 1rem;
+        }
+
+        .error-message {
+            color: red;
+            text-transform: capitalize;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+        }
+    }
+}

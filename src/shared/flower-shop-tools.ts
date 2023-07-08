@@ -4,6 +4,8 @@ export const flowerShopData: IFlowerShopData[] = [
     {
         name: 'Roses',
         code: 'R12',
+        image: 'rose.png',
+        defaultValue: 10,
         bundles: [
             {
                 quantity: 5,
@@ -18,6 +20,8 @@ export const flowerShopData: IFlowerShopData[] = [
     {
         name: 'Lilies',
         code: 'L09',
+        image: 'lily.png',
+        defaultValue: 15,
         bundles: [
             {
                 quantity: 3,
@@ -36,6 +40,8 @@ export const flowerShopData: IFlowerShopData[] = [
     {
         name: 'Tulips',
         code: 'T58',
+        image: 'tulip.png',
+        defaultValue: 13,
         bundles: [
             {
                 quantity: 3,
@@ -162,7 +168,7 @@ export const getBundleCombinationOfGivenFlower = (code: string, quantity: number
 
 // Validate given data
 // This checks many things given the user input
-type TCheckGivenData = (data: TGenerateToolData[]) => string[]
+export type TCheckGivenData = (data: TGenerateToolData[]) => string[]
 export const checkGivenData: TCheckGivenData = (data) => {
     // This approach should be cleaner
     // const errors: string[] = data.reduce((finalErrors, currentData) => {
@@ -213,7 +219,7 @@ export const checkGivenData: TCheckGivenData = (data) => {
 
 // Get Total result based on user input
 // Reaching this point it means that we have a valid quantity for a valid code
-type TGetTotalResult = (data: TGenerateToolData[]) => TBundleResult[]
+export type TGetTotalResult = (data: TGenerateToolData[]) => TBundleResult[]
 export const getTotalResult: TGetTotalResult = (data) => {
 
     const total: TBundleResult[] = []
@@ -222,6 +228,7 @@ export const getTotalResult: TGetTotalResult = (data) => {
     data.forEach(currentData => {
         // const flowerWithGivenCode = getFlowerByCode(currentData.code)
         const bundles = getBundleCombinationOfGivenFlower(currentData.code, currentData.quantity)
+        console.log('getTotalResult bundles', bundles)
         if (bundles.length > 0) {
             bundles.forEach(bundle => total.push(bundle))
         }
@@ -256,7 +263,7 @@ export const calculateTotalBreakdown = (data: TGenerateToolData[], totalResult: 
         breakdown.push({
             quantity: currentData.quantity,
             code: currentData.code,
-            totalPrice: `${totalPrice}$`,
+            totalPrice: `${totalPrice.toFixed(2)}$`,
             items: totalResult.map(result => {
                 return {
                     occurrencies: result.occurrencies,
@@ -273,8 +280,8 @@ export const calculateTotalBreakdown = (data: TGenerateToolData[], totalResult: 
 
 // Main function for generating the total
 // It checks errors before trying to get a total value
-type TGenerateToolData = { code: string, quantity: number }
-type TGenerateTool = (data: TGenerateToolData[]) => TBreakdown
+export type TGenerateToolData = { code: string, quantity: number }
+export type TGenerateTool = (data: TGenerateToolData[]) => TBreakdown
 export const generateTotal: TGenerateTool = (data: TGenerateToolData[]) => {
     console.log('data', data)
 
@@ -286,8 +293,10 @@ export const generateTotal: TGenerateTool = (data: TGenerateToolData[]) => {
     // data is valid
     // Let's calculate the total
     const totalResult = getTotalResult(data)
+    console.log('totalResult', totalResult)
     // return totalResult
     const totalBreakdown = calculateTotalBreakdown(data, totalResult)
+    console.log('totalBreakdown', totalBreakdown)
 
     return totalBreakdown
 }
