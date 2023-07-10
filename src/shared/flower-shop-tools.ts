@@ -5,7 +5,7 @@ export const flowerShopData: IFlowerShopData[] = [
         name: 'Roses',
         code: 'R12',
         image: 'rose.png',
-        defaultValue: 10,
+        // defaultValue: 10,
         bundles: [
             {
                 quantity: 5,
@@ -21,7 +21,7 @@ export const flowerShopData: IFlowerShopData[] = [
         name: 'Lilies',
         code: 'L09',
         image: 'lily.png',
-        defaultValue: 15,
+        // defaultValue: 15,
         bundles: [
             {
                 quantity: 3,
@@ -41,7 +41,7 @@ export const flowerShopData: IFlowerShopData[] = [
         name: 'Tulips',
         code: 'T58',
         image: 'tulip.png',
-        defaultValue: 13,
+        // defaultValue: 13,
         bundles: [
             {
                 quantity: 3,
@@ -274,8 +274,6 @@ export const getTotalResult: TGetTotalResult = (data) => {
 export const calculateTotalBreakdown = (totalResult: TResultLine[]) => {
 
     const breakdown: TBreakdown = []
-
-    console.log('%c calculateTotalBreakdown', "color:blue", totalResult)
 
     totalResult.forEach(result => {
         breakdown.push({

@@ -1,0 +1,19 @@
+.Breakdown {
+    position: sticky;
+    top: 0;
+    flex: 1;
+
+    .breakdown-outer,
+    .breakdown-inner {
+        list-style-type: disc;
+        padding: 1rem;
+    }
+
+    .breakdown-outer {
+        
+        & > li {
+            border-bottom: 1px dotted var(--text-on-background);
+            margin-block: 1rem;
+        }
+    }
+}

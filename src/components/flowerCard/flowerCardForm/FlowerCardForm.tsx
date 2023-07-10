@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useCart } from '../../../useCart'
-import './FlowerCardForm.scss'
 import { checkGivenData } from '../../../shared/flower-shop-tools'
 import Button from '../../button/Button'
 import { IFlowerShopBundle } from '../../../shared/flower-shop-tools.types'
 
+import './FlowerCardForm.scss'
+
 interface Props {
     code: string;
     bundles: IFlowerShopBundle[];
-    defaultValue: number;
 }
 const FlowerCardForm = (props: Props) => {
 
@@ -16,14 +16,6 @@ const FlowerCardForm = (props: Props) => {
     // console.log('cartContext', setCartFromData)
     const [quantity, setQuantity] = useState<number>(1)
     const [validationErrors, setValidationErrors] = useState<string[]>([])
-
-    // only for fast-ing the tests
-    useEffect(() => {
-        setQuantity(props.defaultValue)
-    }, [props.defaultValue])
-    useEffect(() => {
-        onClickAddToCart()
-    }, [quantity])
 
     const onClickAddToCart = () => {
         const errors = checkGivenData([{ code: props.code, quantity }])
@@ -38,8 +30,6 @@ const FlowerCardForm = (props: Props) => {
 
     // Add a flag for toggling the buttons
     const isAddedToCart = cart?.find(cartItem => cartItem.code === props.code)
-
-    console.log('cart', cart)
 
     return <form onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()

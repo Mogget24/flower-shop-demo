@@ -1,11 +1,7 @@
-import { useContext, useState } from "react";
 import { IFlowerShopData } from "../../shared/flower-shop-tools.types";
+import FlowerCardForm from "./flowerCardForm/FlowerCardForm";
 
 import './FlowerCard.scss'
-import { checkGivenData, TGenerateToolData, TGetTotalResult } from "../../shared/flower-shop-tools";
-import Button from "../button/Button";
-import { useCart } from "../../useCart";
-import FlowerCardForm from "./flowerCardForm/FlowerCardForm";
 
 interface Props extends IFlowerShopData {
     // onSetData: (data: TGenerateToolData) => void
@@ -33,7 +29,7 @@ const FlowerCard = (props: Props) => {
                 })}
             </ul>
         </div>
-        <FlowerCardForm code={props.code} bundles={props.bundles} defaultValue={props.defaultValue} />
+        <FlowerCardForm code={props.code} bundles={props.bundles} />
     </li>
 }
 

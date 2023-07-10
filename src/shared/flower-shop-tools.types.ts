@@ -8,7 +8,7 @@ export interface IFlowerShopData {
     code: string;
     bundles: IFlowerShopBundle[]
     image?: string;
-    defaultValue: number; // testing purposes only
+    // defaultValue: number; // testing purposes only
 }
 
 export type TBundleResult = {

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { TGenerateToolData } from "./shared/flower-shop-tools";
+import { TGenerateToolData } from "./shared/flower-shop-tools.types";
 
 type TSetCartFromData = (data: TGenerateToolData) => void
 type TremoveItemFromCartByCode = (code: string) => void
@@ -36,7 +36,7 @@ export const CartProvider = (props: Props) => {
     }
 
     const removeItemFromCartByCode: TremoveItemFromCartByCode = code => {
-        console.log('removeItemFromCartByCode', code)
+        // console.log('removeItemFromCartByCode', code)
         setCart(previousCart => {
             const oldDataWithoutCode = previousCart?.filter(cart => cart.code !== code)
             return [...oldDataWithoutCode]

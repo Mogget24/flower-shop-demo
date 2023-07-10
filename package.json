@@ -13,7 +13,8 @@
     "prepare-demo": " npm-run-all -c compile-ts-tools rename-to-cjs",
     "demo": "npm run prepare-demo && node flower-shop-demo.js",
     "test": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "tsc": "tsc"
   },
   "dependencies": {
     "normalize.css": "^8.0.1",
