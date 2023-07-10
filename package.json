@@ -5,16 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite --open",
-    "build": "tsc && vite build",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
     "compile-ts-tools": "tsc --module commonjs --downlevelIteration --outDir ./dist/cjs ./src/shared/flower-shop-tools.ts",
     "rename-to-cjs": "cd ./dist/cjs/ && rm flower-shop-tools.cjs && ren flower-shop-tools.js flower-shop-tools.cjs",
     "prepare-demo": " npm-run-all -c compile-ts-tools rename-to-cjs",
     "demo": "npm run prepare-demo && node flower-shop-demo.js",
     "test": "vitest",
-    "coverage": "vitest run --coverage",
-    "tsc": "tsc"
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "normalize.css": "^8.0.1",

@@ -14,7 +14,7 @@
         }
 
         .error-message {
-            color: red;
+            color: var(--error);
             text-transform: capitalize;
             margin-bottom: 0.5rem;
             font-size: 0.8rem;

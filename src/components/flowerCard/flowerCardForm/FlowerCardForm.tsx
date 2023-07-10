@@ -49,8 +49,8 @@ const FlowerCardForm = (props: Props) => {
                     return <option value={bundle.quantity}>{bundle.quantity}</option>
                 })}
             </select> */}
-            {validationErrors.map(error => {
-                return <p role="alert" aria-live="assertive" className="error-message">{error}</p>
+            {validationErrors.map((error, errorIndex) => {
+                return <p key={`error-${errorIndex}`} role="alert" aria-live="assertive" className="error-message">{error}</p>
             })}
         </div>
 
