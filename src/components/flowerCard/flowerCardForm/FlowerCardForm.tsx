@@ -2,12 +2,12 @@ import { useState } from 'react'
 import { useCart } from '../../../useCart'
 import { checkGivenData } from '../../../shared/flower-shop-tools'
 import Button from '../../button/Button'
-import { IFlowerShopBundle } from '../../../shared/flower-shop-tools.types'
+import { IFlowerShopBundle, TCode } from '../../../shared/flower-shop-tools.types'
 
 import './FlowerCardForm.scss'
 
 interface Props {
-    code: string;
+    code: TCode;
     bundles: IFlowerShopBundle[];
 }
 const FlowerCardForm = (props: Props) => {

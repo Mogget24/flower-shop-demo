@@ -1,4 +1,4 @@
-import { IFlowerShopBundle, IFlowerShopData, TBreakdown, TBundleResult, TCheckGivenData, TGenerateTool, TGenerateToolData, TGetTotalResult, TResultLine } from "./flower-shop-tools.types";
+import { IFlowerShopBundle, IFlowerShopData, TBreakdown, TBundleResult, TCheckGivenData, TCode, TGenerateTool, TGenerateToolData, TGetTotalResult, TResultLine } from "./flower-shop-tools.types";
 
 export const flowerShopData: IFlowerShopData[] = [
     {
@@ -60,13 +60,13 @@ export const flowerShopData: IFlowerShopData[] = [
 ]
 
 // Filters the array of data based on the code
-export const getFlowerByCode = (code: string) => {
+export const getFlowerByCode = (code: TCode) => {
     // also forcing to-upper-case in order to have the user allowed to enter the code in lower case without any error
     return flowerShopData.find(flower => flower.code === code.toUpperCase())
 }
 
 // Get minimum quantity, based on the provided code
-export const getMinimumQuantityOfGivenFlowerCode = (code: string) => {
+export const getMinimumQuantityOfGivenFlowerCode = (code: TCode) => {
     const flowerByCode = getFlowerByCode(code)
     return Math.min(...flowerByCode!.bundles?.map((bundle: IFlowerShopBundle) => bundle.quantity))
 }
@@ -112,7 +112,7 @@ export const getTotalPriceByBundle = (bundle: IFlowerShopBundle, occurrences: nu
 }
 
 // Get a combination of bundles for the given quantity
-export const getBundleCombinationOfGivenFlower = (code: string, quantity: number) => {
+export const getBundleCombinationOfGivenFlower = (code: TCode, quantity: number) => {
     const flowerByCode = getFlowerByCode(code)
 
     const bundlesToReturn: Array<TBundleResult[]> = []
@@ -160,7 +160,7 @@ export const getBundleCombinationOfGivenFlower = (code: string, quantity: number
 }
 
 // Receives an array of bundles combinations; it generates the "best" one based on occurrences and prices
-const getBestBundleBasedOnOccurrencesAndPrice = (bundles: TBundleResult[][]) => {
+export const getBestBundleBasedOnOccurrencesAndPrice = (bundles: TBundleResult[][]) => {
 
     // Find the "best" bundle
     let bundleToReturn: TBundleResult[] | null = null
@@ -201,6 +201,7 @@ export const checkGivenData: TCheckGivenData = (data) => {
         data.forEach(currentData => {
 
             // Check code
+            // @ts-expect-error bypassed because user can type anything in Demo
             if (currentData.code === "") {
                 errors.push('code must not be empty')
             }
