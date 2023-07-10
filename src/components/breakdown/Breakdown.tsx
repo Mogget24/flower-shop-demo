@@ -15,8 +15,7 @@ const Breakdown = () => {
     }
 
     return <div className="Breakdown">
-        Breakdown
-        <Button onClick={onClickPlaceOrder} style={{ position: 'fixed', bottom: "1rem", right: "1rem" }}>Place order</Button>
+        <Button onClick={onClickPlaceOrder} style={{ position: 'fixed', bottom: "1rem", right: "1rem" }}>Breakdown</Button>
     </div>
 }
 

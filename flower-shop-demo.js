@@ -25,12 +25,12 @@ readlineInterface.on('line', (line) => {
     // Close case
     if (/done/gi.test(line)) {
         try {
-            const totalBreakdown = flowerShopTools.generateTotal(lines)
+            const totalBreakdown = flowerShopTools.generateTotal(lines) // this is where "everything" happens
             console.log('Breakdown is')
             totalBreakdown.forEach(breakdown => {
                 console.log(`${breakdown.quantity} ${breakdown.code} ${breakdown.totalPrice}`)
                 breakdown.items.forEach(item => {
-                    console.log(` - ${item.occurrencies} x ${item.quantity} ${item.price}`)
+                    console.log(` - ${item.occurrences} x ${item.quantity} ${item.price}`)
                 })
                 console.log('---')
             });

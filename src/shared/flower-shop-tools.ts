@@ -1,4 +1,4 @@
-import { IFlowerShopBundle, IFlowerShopData } from "./flower-shop-tools.types";
+import { IFlowerShopBundle, IFlowerShopData, TBreakdown, TBundleResult, TCheckGivenData, TGenerateTool, TGenerateToolData, TGetTotalResult, TResultLine } from "./flower-shop-tools.types";
 
 export const flowerShopData: IFlowerShopData[] = [
     {
@@ -77,16 +77,9 @@ export const getCombinations = (quantity: number, quantities: number[]) => {
 
     const combinations = []
 
-    // console.log('quantity', quantity, 'quantities', quantities)
     for (let i = 0; i < quantities.length; i++) {
-        // console.log('gne', quantity % quantities[i])
 
         const quantityModule = quantity % quantities[i]
-        // const rest = quantity - (quantityModule * quantities[i])
-
-
-        // console.log('quantityModule', quantityModule)
-        // console.log('rest', rest)
 
         // if the module is 0 it means that quantity is a multiple of current quantity
         // so push a combination of the current quantity and the array length is the division
@@ -103,9 +96,8 @@ export const getCombinations = (quantity: number, quantities: number[]) => {
             combinations.push([...Array.from({ length: (quantity / quantities[i]) }, (_) => quantities[i]), quantityModule])
         }
     }
-    // console.log('combinations', combinations)
 
-    // Count the occurrencies of same numbers
+    // Count the occurrences of same numbers
     // Yes, this is from stackoverflow :D
     // https://stackoverflow.com/questions/5667888/counting-the-occurrences-frequency-of-array-elements
     const combinationsArranged: Map<number, number>[] = combinations.map(combination => combination.reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map()))
@@ -113,62 +105,87 @@ export const getCombinations = (quantity: number, quantities: number[]) => {
     return combinationsArranged
 }
 
-export const getTotalPriceByBundle = (bundle: IFlowerShopBundle) => {
+// Returns the total price multiplying the price of the bundle * the number of occurrences
+export const getTotalPriceByBundle = (bundle: IFlowerShopBundle, occurrences: number) => {
     const numericPrice = parseFloat(bundle.price.replace('$', ''))
-    return `${bundle.quantity * numericPrice}$`
+    return `$${numericPrice * occurrences}`
 }
 
 // Get a combination of bundles for the given quantity
-type TBundleResult = { bundle: IFlowerShopBundle; occurrencies: number, code: string, quantity: number, totalPrice?: string, price: string }
 export const getBundleCombinationOfGivenFlower = (code: string, quantity: number) => {
     const flowerByCode = getFlowerByCode(code)
 
-    const bundlesToReturn: TBundleResult[] = []
+    const bundlesToReturn: Array<TBundleResult[]> = []
 
     // Basic case
     // Given quantity is equal to one of those we have
     const bundleWithExactQuantity = flowerByCode?.bundles.find(bundle => bundle.quantity === quantity)
 
     if (bundleWithExactQuantity) {
-        bundlesToReturn.push({
+        const combinationsToReturn: TBundleResult[] = []
+        combinationsToReturn.push({
             code,
             quantity,
             bundle: bundleWithExactQuantity,
             price: bundleWithExactQuantity.price,
-            occurrencies: 1,
-            totalPrice: getTotalPriceByBundle(bundleWithExactQuantity)
+            occurrences: 1,
+            totalPrice: getTotalPriceByBundle(bundleWithExactQuantity, 1)
         })
+        bundlesToReturn.push(combinationsToReturn)
     } else {
         const quantitiesForFlower = flowerByCode?.bundles.map(bundle => bundle.quantity)
+
         // We get the combinations...
         const combinations = getCombinations(quantity, quantitiesForFlower!)
 
-        // console.log('combinations', combinations.entries())
-
         // ...for each of them we calculate the bundle to return
         combinations.forEach(combination => {
-            // console.log('combination', combination)
-            for (let [bundleQuantity, occurrencies] of combination) {
+            const combinationsToReturn: TBundleResult[] = []
+            for (let [bundleQuantity, occurrences] of combination) {
                 const bundleWithPrice = flowerByCode?.bundles.find(bundle => bundle.quantity === bundleQuantity)
-                bundlesToReturn.push({
+                combinationsToReturn.push({
                     code,
                     quantity,
                     bundle: bundleWithPrice!,
                     price: bundleWithPrice!.price,
-                    occurrencies,
-                    totalPrice: getTotalPriceByBundle(bundleWithPrice!)
+                    occurrences,
+                    totalPrice: getTotalPriceByBundle(bundleWithPrice!, occurrences)
                 })
             }
-            // const bundleWithPrice = flowerByCode?.bundles.find(bundle => bundle.quantity === bundleQuantity)
+            bundlesToReturn.push(combinationsToReturn)
         })
     }
 
     return bundlesToReturn
 }
 
+// Receives an array of bundles combinations; it generates the "best" one based on occurrences and prices
+const getBestBundleBasedOnOccurrencesAndPrice = (bundles: TBundleResult[][]) => {
+
+    // Find the "best" bundle
+    let bundleToReturn: TBundleResult[] | null = null
+    let bundlePrice = Infinity;
+    for (let i = 0; i < bundles.length; i++) {
+
+        // replace bundleToReturn based on price
+        const totalBundlePrice = bundles[i].reduce((total, currentResult) => {
+            const numericPrice = parseFloat(currentResult.price.replace('$', ''))
+            return total + (currentResult.occurrences * numericPrice)
+        }, 0)
+
+        if (totalBundlePrice < bundlePrice) {
+            bundleToReturn = bundles[i]
+            bundlePrice = totalBundlePrice
+        }
+
+    }
+
+    return bundleToReturn
+
+}
+
 // Validate given data
 // This checks many things given the user input
-export type TCheckGivenData = (data: TGenerateToolData[]) => string[]
 export const checkGivenData: TCheckGivenData = (data) => {
     // This approach should be cleaner
     // const errors: string[] = data.reduce((finalErrors, currentData) => {
@@ -219,56 +236,57 @@ export const checkGivenData: TCheckGivenData = (data) => {
 
 // Get Total result based on user input
 // Reaching this point it means that we have a valid quantity for a valid code
-export type TGetTotalResult = (data: TGenerateToolData[]) => TBundleResult[]
 export const getTotalResult: TGetTotalResult = (data) => {
 
-    const total: TBundleResult[] = []
+    const total: TResultLine[] = []
 
-    // For each "line" inserted by the user, gather its bundles
     data.forEach(currentData => {
-        // const flowerWithGivenCode = getFlowerByCode(currentData.code)
+
+        // For each "line" inserted by the user, gather its bundles
         const bundles = getBundleCombinationOfGivenFlower(currentData.code, currentData.quantity)
-        console.log('getTotalResult bundles', bundles)
-        if (bundles.length > 0) {
-            bundles.forEach(bundle => total.push(bundle))
+
+        // Get the "best" one which is the cheaper
+        const optimizedBundle: TBundleResult[] | null = getBestBundleBasedOnOccurrencesAndPrice(bundles)
+        if (!!optimizedBundle) {
+
+            // Calculate the total price
+            const totalPrice = optimizedBundle.reduce((total, currentResult) => {
+                const numericPrice = parseFloat(currentResult.price.replace('$', ''))
+                return total + (currentResult.occurrences * numericPrice)
+            }, 0)
+
+            total.push({
+                code: currentData.code,
+                quantity: currentData.quantity,
+                bundles: optimizedBundle!,
+                totalPrice: `$${totalPrice.toFixed(2)}`
+            })
+        } else {
+            console.warn('no optimizedBundle found')
         }
+
     })
 
     return total
 }
 
-type TBreakdown = {
-    quantity: number,
-    code: string,
-    totalPrice: string,
-    items: {
-        occurrencies: number,
-        quantity: number,
-        price: string
-    }[]
-}[]
-
-
-export const calculateTotalBreakdown = (data: TGenerateToolData[], totalResult: TBundleResult[]) => {
+// calculate the brekdown which is the final thing that the user sees
+export const calculateTotalBreakdown = (totalResult: TResultLine[]) => {
 
     const breakdown: TBreakdown = []
 
-    // console.log('calculateTotalBreakdown', data, totalResult)
+    console.log('%c calculateTotalBreakdown', "color:blue", totalResult)
 
-    data.forEach(currentData => {
-        const totalPrice = totalResult.reduce((total, currentResult) => {
-            const numericPrice = parseFloat(currentResult.price.replace('$', ''))
-            return total + (currentResult.occurrencies * numericPrice)
-        }, 0)
+    totalResult.forEach(result => {
         breakdown.push({
-            quantity: currentData.quantity,
-            code: currentData.code,
-            totalPrice: `${totalPrice.toFixed(2)}$`,
-            items: totalResult.map(result => {
+            quantity: result.quantity,
+            code: result.code,
+            totalPrice: result.totalPrice,
+            items: result.bundles?.map(bundle => {
                 return {
-                    occurrencies: result.occurrencies,
-                    quantity: result.bundle.quantity,
-                    price: result.bundle.price
+                    occurrences: bundle.occurrences,
+                    quantity: bundle.bundle.quantity,
+                    price: bundle.bundle.price
                 }
             })
         })
@@ -280,10 +298,7 @@ export const calculateTotalBreakdown = (data: TGenerateToolData[], totalResult: 
 
 // Main function for generating the total
 // It checks errors before trying to get a total value
-export type TGenerateToolData = { code: string, quantity: number }
-export type TGenerateTool = (data: TGenerateToolData[]) => TBreakdown
 export const generateTotal: TGenerateTool = (data: TGenerateToolData[]) => {
-    console.log('data', data)
 
     // Validate the passed data
     const errorsFromGivenData = checkGivenData(data)
@@ -293,10 +308,9 @@ export const generateTotal: TGenerateTool = (data: TGenerateToolData[]) => {
     // data is valid
     // Let's calculate the total
     const totalResult = getTotalResult(data)
-    console.log('totalResult', totalResult)
-    // return totalResult
-    const totalBreakdown = calculateTotalBreakdown(data, totalResult)
-    console.log('totalBreakdown', totalBreakdown)
+    
+    // calculate the final breakdown
+    const totalBreakdown = calculateTotalBreakdown(totalResult)
 
     return totalBreakdown
 }
